@@ -6,19 +6,21 @@ const headers = [
   'Invested Capital',
 ]
 
+//TODO: Center text align
+
 export default function Result() {
   return (
-    <div>
-      <table className="result">
+    <span id="result">
+      <table>
         <thead>
           <tr>
             {headers.map((header) => (
-              <th>{header}</th>
+              <th key={header}>{header}</th>
             ))}
           </tr>
         </thead>
         <tbody></tbody>
       </table>
-    </div>
+    </span>
   )
 }
