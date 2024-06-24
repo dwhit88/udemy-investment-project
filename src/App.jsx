@@ -30,19 +30,21 @@ function App() {
       return prev
     }, [])
 
-    const [ initialInvestment, annualInvestment, expectedReturn, duration ] =
-      values
-      
-    const newAnnualData = calculateInvestmentResults({
-      initialInvestment,
-      annualInvestment,
-      expectedReturn,
-      duration,
-    })
+    if (values.every(item => item)) {
+      const [initialInvestment, annualInvestment, expectedReturn, duration] =
+        values
 
-    console.log(newAnnualData)
+      const newAnnualData = calculateInvestmentResults({
+        initialInvestment,
+        annualInvestment,
+        expectedReturn,
+        duration,
+      })
 
-    setAnnualData(newAnnualData)
+      console.log(newAnnualData)
+
+      setAnnualData(newAnnualData)
+    }
   }
 
   return (
