@@ -4,11 +4,19 @@ import Result from './components/Result'
 import { calculateInvestmentResults } from './util/investment'
 
 const fields = [
-  { id: 'initialInvestment', label: 'Initial Investment', value: null },
-  { id: 'annualInvestment', label: 'Annual Investment', value: null },
-  { id: 'expectedReturn', label: 'Expected Return', value: null },
-  { id: 'duration', label: 'Duration', value: null },
+  { id: 'initialInvestment', label: 'Initial Investment', value: 0 },
+  { id: 'annualInvestment', label: 'Annual Investment', value: 0 },
+  { id: 'expectedReturn', label: 'Expected Return', value: 0 },
+  { id: 'duration', label: 'Duration', value: 0 },
 ]
+
+function hasValidInput(currentData) {
+  return currentData.find((item) => item.id == 'duration')?.value > 0
+}
+
+function hasDefaultValues(currentData) {
+  return currentData.every((item) => item.value == 0)
+}
 
 function App() {
   const [annualData, setAnnualData] = useState([])
@@ -19,30 +27,23 @@ function App() {
 
     for (const [index, field] of currentData.entries()) {
       if (event.target.id === field.id) {
-        currentData[index].value = event.target.value
+        currentData[index].value = +event.target.value
       }
     }
 
     setUserInvestmentValues(currentData)
+    if (!hasValidInput(currentData)) return
 
-    const values = currentData.reduce((prev, curr) => {
-      prev.push(curr.value)
-      return prev
-    }, [])
+    const readyToCalc = currentData.every((item) => item.value)
 
-    if (values.every(item => item)) {
-      const [initialInvestment, annualInvestment, expectedReturn, duration] =
-        values
+    if (readyToCalc) {
+      let data = {}
 
-      const newAnnualData = calculateInvestmentResults({
-        initialInvestment,
-        annualInvestment,
-        expectedReturn,
-        duration,
-      })
+      for (const field of fields) {
+        data[field.id] = field.value
+      }
 
-      console.log(newAnnualData)
-
+      const newAnnualData = calculateInvestmentResults(data)
       setAnnualData(newAnnualData)
     }
   }
@@ -54,7 +55,13 @@ function App() {
         <h1>React Investment Calculator</h1>
       </header>
       <Fields formFields={fields} onChange={handleInvestmentChange} />
-      <Result data={annualData} />
+      {hasDefaultValues(userInvestmentValues) ? null : hasValidInput(
+          userInvestmentValues
+        ) ? (
+        <Result annualData={annualData} />
+      ) : (
+        <p className="center">Please make sure you have valid inputs!</p>
+      )}
     </div>
   )
 }
